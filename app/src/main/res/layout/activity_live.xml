@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A0F">
+
+    <TextView
+        android:id="@+id/liveTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="140dp"
+        android:text="📡 Live Lecture"
+        android:textColor="#00E5FF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Placeholder Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/liveCard"
+        android:layout_width="0dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="#1A1A28"
+        app:layout_constraintTop_toBottomOf="@id/liveTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_live_tv"
+                app:tint="#7C4DFF"
+                android:contentDescription="Live Icon" />
+
+            <TextView
+                android:text="No Live Session Currently"
+                android:textColor="#AAAAAA"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+            <TextView
+                android:text="Next live: Tomorrow @ 10:00 AM"
+                android:textColor="#00E5FF"
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/btnJoinLive"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="▶ Join Live Lecture"
+        android:textColor="#0A0A0F"
+        android:backgroundTint="#00FFAA"
+        android:textStyle="bold"
+        android:padding="14dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cornerRadius="14dp"
+        app:layout_constraintTop_toBottomOf="@id/liveCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

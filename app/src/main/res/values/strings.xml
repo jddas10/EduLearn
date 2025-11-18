@@ -1,0 +1,10 @@
+<resources>
+    <!-- tumhare existing string yahan pe hain -->
+
+    <string name="app_name">EduLearn</string>
+
+    <!-- ✅ ye naya string add karo -->
+    <string name="default_web_client_id">
+        YOUR_WEB_CLIENT_ID_HERE
+    </string>
+</resources>
