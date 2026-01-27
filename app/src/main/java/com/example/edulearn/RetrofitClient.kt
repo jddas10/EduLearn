@@ -1,0 +1,18 @@
+package com.example.edulearn
+
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object RetrofitClient {
+    // Apne computer ka IP address yahan dalein (localhost nahi chalega)
+// RetrofitClient.kt
+    private const val BASE_URL = "http://192.168.31.170:3000/"
+    val instance: ApiService by lazy {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        retrofit.create(ApiService::class.java)
+    }
+}

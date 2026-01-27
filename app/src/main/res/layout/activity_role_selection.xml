@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pattern_silver">
+
+    <!-- Decorative Lines -->
+    <View
+        android:layout_width="200dp"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:rotation="45"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="40dp"/>
+
+    <!-- Glow Circle Top -->
+    <View
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:background="@drawable/blue_glow_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="-80dp"
+        android:layout_marginEnd="-60dp"/>
+
+    <!-- Title -->
+
+    <!-- Student Button -->
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="636dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/blue_glow_circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="236dp"
+        android:text="Continue as"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnStudent"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="Student"
+        android:textAllCaps="false"
+        android:textSize="25sp"
+        android:background="@drawable/btn_gradient_blue"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginHorizontal="40dp"/>
+
+    <!-- Teacher Button -->
+    <Button
+        android:id="@+id/btnTeacher"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/btn_gradient_purple"
+        android:text="Teacher"
+        android:textAllCaps="false"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnStudent" />
+
+    <!-- Bottom Glow -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

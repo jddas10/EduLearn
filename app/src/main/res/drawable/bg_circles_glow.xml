@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="640dp"
+    android:viewportWidth="360"
+    android:viewportHeight="640">
+
+    <!-- Top left glow circle -->
+    <path
+        android:pathData="M-50,50 a150,150 0 1,0 300,0 a150,150 0 1,0 -300,0"
+        android:fillColor="#6600E5FF"/>
+
+    <!-- Bottom right glow circle -->
+    <path
+        android:pathData="M250,550 a150,150 0 1,0 300,0 a150,150 0 1,0 -300,0"
+        android:fillColor="#6600E5FF"/>
+
+</vector>

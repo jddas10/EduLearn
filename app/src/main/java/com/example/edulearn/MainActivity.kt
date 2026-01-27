@@ -12,19 +12,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.material.card.MaterialCardView
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
-
-// Google Sign-In imports
-
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
-
-
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,22 +29,32 @@ class MainActivity : AppCompatActivity() {
     private val ANIMATION_DURATION = 900L
     private val STAGGER_DELAY = 150L
 
-    // Google Sign-In client
     private lateinit var googleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 1001
+    private lateinit var sessionManager: SessionManager
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sessionManager = SessionManager(this)
+        if (!sessionManager.isLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
-        // ---------- Google Sign-In setup (NO Firebase) ----------
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()               // sirf email/naam chahiye
+            .requestEmail()
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-        // --------------------------------------------------------
 
+        drawerLayout = findViewById(R.id.drawerLayout)
+        val navView = findViewById<NavigationView>(R.id.navView)
+        val menuIcon = findViewById<ImageView>(R.id.menuIcon)
         val titleText = findViewById<TextView>(R.id.titleText)
         val welcomeCard = findViewById<MaterialCardView>(R.id.welcomeCard)
         val buttonGrid = findViewById<GridLayout>(R.id.buttonGrid)
@@ -61,6 +68,18 @@ class MainActivity : AppCompatActivity() {
         val btnQuiz = findViewById<Button>(R.id.btnQuiz)
         val btnMarks = findViewById<Button>(R.id.btnMarks)
         val btnHomework = findViewById<Button>(R.id.btnHomework)
+
+        menuIcon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_logout -> performLogout()
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
 
         fun prepareForAnimation(view: View?) {
             view?.apply {
@@ -105,7 +124,6 @@ class MainActivity : AppCompatActivity() {
         btnMarks.setOnClickListener { safeStart(MarksActivity::class.java) }
         btnHomework.setOnClickListener { safeStart(HomeworkActivity::class.java) }
 
-        // ---------- Settings dialog ----------
         settingsIcon.setOnClickListener {
             val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_settings, null)
             val dialog = AlertDialog.Builder(this, R.style.SettingsDialogTheme)
@@ -115,22 +133,22 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
 
             val btnChangeTheme = dialogView.findViewById<Button>(R.id.btnChangeTheme)
-            val btnLoginGoogle = dialogView.findViewById<Button>(R.id.btnLoginGoogle)
-
-            btnChangeTheme.setOnClickListener { dialog.dismiss() }
-
-            // Yahi se Google Sign-In start hoga
-            btnLoginGoogle.setOnClickListener {
-                signInWithGoogle()
-                dialog.dismiss()
-            }
+            btnChangeTheme?.setOnClickListener { dialog.dismiss() }
         }
 
-        // App khulte hi naam update kar do (agar pehle se login hai)
         updateWelcomeName()
     }
 
-    // ---------- Google Sign-In flow (NO Firebase) ----------
+    private fun performLogout() {
+        googleSignInClient.signOut().addOnCompleteListener(this) {
+            sessionManager.logout()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun signInWithGoogle() {
         val intent = googleSignInClient.signInIntent
@@ -154,32 +172,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun onGoogleSignInSuccess(account: GoogleSignInAccount?) {
         val name = account?.displayName ?: "User"
-
-        // Local save (SharedPreferences)
         val prefs = getSharedPreferences("edulearn_prefs", MODE_PRIVATE)
         prefs.edit().putString("user_name", name).apply()
-
-        // UI update
         updateWelcomeName()
-
         Toast.makeText(this, "Logged in as $name", Toast.LENGTH_SHORT).show()
     }
 
-    // ---------- Welcome text update ----------
     private fun updateWelcomeName() {
         val welcomeTitle = findViewById<TextView>(R.id.welcomeTitle)
-
-        val prefs = getSharedPreferences("edulearn_prefs", MODE_PRIVATE)
-        val savedName = prefs.getString("user_name", null)
-
-        // Agar prefs me nahi mila to Google ka last signed-in account dekh lo
-        val googleAccount = GoogleSignIn.getLastSignedInAccount(this)
-        val fallbackName = googleAccount?.displayName
-
-        val nameToShow = savedName ?: fallbackName ?: "User"
+        val fullName = sessionManager.getFullName()
+        val username = sessionManager.getUsername()
+        val nameToShow = fullName ?: username ?: "User"
         welcomeTitle.text = "Welcome Back, $nameToShow!"
     }
 }
