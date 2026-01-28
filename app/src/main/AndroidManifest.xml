@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.edulearn">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -9,7 +10,9 @@
         android:label="EduLearn"
         android:roundIcon="@mipmap/edu_logo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EduLearn">
+        android:theme="@style/Theme.EduLearn"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
             android:name=".RoleSelectionActivity"
@@ -24,8 +27,9 @@
             android:name=".LoginActivity"
             android:exported="false" />
 
-        <activity android:name=".SignUpActivity" android:exported="false" />
-        <activity android:name=".MainActivity" android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
         <activity android:name=".AttendanceActivity" />
         <activity android:name=".LiveLectureActivity" />
@@ -35,4 +39,5 @@
         <activity android:name=".HomeworkActivity" />
 
     </application>
+
 </manifest>
