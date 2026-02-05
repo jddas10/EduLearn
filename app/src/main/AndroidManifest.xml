@@ -12,11 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EduLearn"
         android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        >
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".RoleSelectionActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".RoleSelectionActivity"
+            android:name=".MainActivity"
             android:exported="false" />
 
         <activity
@@ -39,8 +38,5 @@
         <activity android:name=".MarksActivity" />
         <activity android:name=".HomeworkActivity" />
 
-
-
     </application>
-
 </manifest>

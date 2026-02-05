@@ -28,7 +28,7 @@ class RoleSelectionActivity : AppCompatActivity() {
 
     private fun openLoginScreen(role: String) {
         val intent = Intent(this, LoginActivity::class.java)
-        intent.putExtra("LOGIN_ROLE", role)
+        intent.putExtra("LOGIN_ROLE", role.uppercase())
         startActivity(intent)
 
         // Smooth transition (optional but premium feel)
