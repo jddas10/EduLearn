@@ -21,7 +21,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sessionManager = SessionManager(this)
 
         if (sessionManager.isLoggedIn()) {
@@ -32,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_login)
 
-        // ✅ only once
         loginRole = intent.getStringExtra("LOGIN_ROLE")?.uppercase() ?: "STUDENT"
 
         etUsername = findViewById(R.id.etUsername)
@@ -47,64 +45,37 @@ class LoginActivity : AppCompatActivity() {
         val password = etPassword.text?.toString()?.trim().orEmpty()
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Enter username and password", Toast.LENGTH_SHORT).show()
             return
         }
 
         val loginRequest = LoginRequest(username, password, loginRole)
 
         RetrofitClient.instance.loginUser(loginRequest).enqueue(object : Callback<AuthResponse> {
-
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                if (response.isSuccessful) {
+                    val auth = response.body()
+                    if (auth?.success == true) {
+                        val displayName = auth.name ?: username
+                        sessionManager.saveSession(username, displayName)
 
-                if (!response.isSuccessful) {
-                    val errorBody = response.errorBody()?.string()
-                    val msg = errorBody?.let { parseErrorMessage(it) }
-                        ?: "Login failed (${response.code()})"
-                    Toast.makeText(this@LoginActivity, msg, Toast.LENGTH_SHORT).show()
-                    return
+                        Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, auth?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorMsg = response.errorBody()?.string()?.let {
+                        try { JSONObject(it).getString("message") } catch (e: Exception) { null }
+                    } ?: "Server Error"
+                    Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_SHORT).show()
                 }
-
-                val auth = response.body()
-
-                // ✅ success can be via success=true OR token/user present (node backend)
-                val isSuccess =
-                    (auth?.success == true) ||
-                            (!auth?.token.isNullOrBlank()) ||
-                            (auth?.user != null)
-
-                if (!isSuccess) {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        auth?.message ?: "Invalid credentials",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return
-                }
-
-                val displayName = auth?.name?.takeIf { it.isNotBlank() } ?: username
-                sessionManager.saveSession(username, displayName)
-
-                Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                finish()
             }
 
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                Toast.makeText(
-                    this@LoginActivity,
-                    "Connection Error: ${t.localizedMessage ?: "Unknown"}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@LoginActivity, "Connection Error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun parseErrorMessage(body: String): String? {
-        return try {
-            JSONObject(body).optString("message").takeIf { it.isNotBlank() }
-        } catch (_: Exception) {
-            null
-        }
     }
 }

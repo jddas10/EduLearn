@@ -5,13 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(
-    entities = [User::class],
-    version = 1,
-    exportSchema = false
-)
+@Database(entities = [User::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun userDao(): UserDao
 
     companion object {
@@ -25,10 +20,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "edulearn_db"
                 )
-                    // 🔥 THIS LINE FIXES YOUR CRASH
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration() // Purana data delete karke naya schema banayega
                     .build()
-
                 INSTANCE = instance
                 instance
             }

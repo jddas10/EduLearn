@@ -8,9 +8,6 @@ import androidx.room.Query
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1")
-    suspend fun login(username: String, password: String): User?
-
     @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
     suspend fun getUserByUsername(username: String): User?
 
@@ -19,4 +16,7 @@ interface UserDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM users WHERE username = :username)")
     suspend fun usernameExists(username: String): Boolean
+
+    @Query("DELETE FROM users")
+    suspend fun clearAllUsers()
 }
