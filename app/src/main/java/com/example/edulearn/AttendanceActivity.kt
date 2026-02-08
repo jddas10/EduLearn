@@ -33,10 +33,10 @@ class AttendanceActivity : AppCompatActivity() {
                     btnMarkAttendance.visibility = View.VISIBLE
                     btnCapturePhoto.visibility = View.GONE
                 } else {
-                    Toast.makeText(this, "Photo nahi mila", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "can't get image", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Camera cancel ho gaya", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Camera canceled", Toast.LENGTH_SHORT).show()
             }
         }
 

@@ -14,11 +14,20 @@ class RoleSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         sessionManager = SessionManager(this)
+
         if (sessionManager.isLoggedIn()) {
-            startActivity(Intent(this, MainActivity::class.java))
+            val next = if (sessionManager.getRole() == "TEACHER")
+                TeacherMainActivity::class.java
+            else
+                MainActivity::class.java
+
+            startActivity(Intent(this, next).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
             finish()
             return
         }
+
 
         binding = ActivityRoleSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)

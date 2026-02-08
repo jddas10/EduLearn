@@ -38,14 +38,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         sessionManager = SessionManager(this)
-        if (!sessionManager.isLoggedIn()) {
-            val intent = Intent(this, RoleSelectionActivity::class.java).apply {
+        if (sessionManager.getRole() == "TEACHER") {
+            startActivity(Intent(this, TeacherMainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
+            })
             finish()
             return
         }
+
+        if (sessionManager.getRole() == "TEACHER") {
+            startActivity(Intent(this, TeacherMainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+            return
+        }
+
 
         setContentView(R.layout.activity_main)
 
@@ -145,13 +153,18 @@ class MainActivity : AppCompatActivity() {
     private fun performLogout() {
         googleSignInClient.signOut().addOnCompleteListener(this) {
             sessionManager.logout()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            val intent = Intent(this, RoleSelectionActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
             startActivity(intent)
             finish()
+
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun signInWithGoogle() {
         val intent = googleSignInClient.signInIntent

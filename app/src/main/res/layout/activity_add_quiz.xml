@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Quiz"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etQuizTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Quiz Title"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etTotalMarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Total Marks"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/tvQuestionCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Questions added: 0" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <EditText
+            android:id="@+id/etQuestionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Question Text"
+            android:inputType="textMultiLine" />
+
+        <EditText
+            android:id="@+id/etOptA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option A"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etOptB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option B"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etOptC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option C"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etOptD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Option D"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etCorrectOpt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Correct Option (A/B/C/D)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etQuestionMarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Marks for this question"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/btnAddQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Question" />
+
+        <Button
+            android:id="@+id/btnSubmitQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Quiz" />
+
+    </LinearLayout>
+</ScrollView>

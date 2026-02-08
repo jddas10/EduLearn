@@ -6,7 +6,7 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".TeacherMainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -41,7 +41,6 @@
                         android:src="@drawable/ic_menu"
                         app:tint="#B0BEC5"
                         android:contentDescription="Menu" />
-
 
                     <TextView
                         android:id="@+id/titleText"
@@ -92,7 +91,7 @@
                                 android:id="@+id/welcomeTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Welcome Back, User!"
+                                android:text="Welcome Back, Teacher!"
                                 android:textColor="#FFFFFF"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -101,7 +100,7 @@
                                 android:id="@+id/coursesCompleted"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Courses Completed: 75%"
+                                android:text="Syllabus Covered: 75%"
                                 android:textColor="#90CAF9"
                                 android:textSize="15sp"
                                 android:layout_marginTop="8dp" />
@@ -110,7 +109,7 @@
                                 android:id="@+id/nextLive"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Next Live: Tomorrow @ 10 AM"
+                                android:text="Next Class: Tomorrow @ 10 AM"
                                 android:textColor="#C5CAE9"
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -242,7 +241,7 @@
                     android:id="@+id/recentHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Recent Activity"
+                    android:text="⏳ Pending Actions"
                     android:textColor="#F0F8FF"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -267,7 +266,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Student's Progress"
+                            android:text="Evaluation Status"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:layout_marginBottom="2dp"
@@ -276,18 +275,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Progress: 75% completed"
+                            android:text="• Homework to Review: 12"
                             android:textColor="#B0B0B0"
                             android:textSize="14sp"
                             android:layout_marginBottom="8dp" />
 
                         <ProgressBar
-                            android:id="@+id/progressBar1"
+                            android:id="@+id/pendingProgressBar"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:progress="75"
-                            android:progressTint="#90CAF9"
+                            android:progress="60"
+                            android:progressTint="#FFD54F"
                             android:layout_marginBottom="12dp"/>
 
                         <View
@@ -299,7 +298,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Attendance Summary"
+                            android:text="Administrative Tasks"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:layout_marginBottom="2dp"
@@ -308,7 +307,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Overall: 92% present"
+                            android:text="• Attendance Not Taken: 1 class"
                             android:textColor="#B0B0B0"
                             android:textSize="14sp" />
                     </LinearLayout>

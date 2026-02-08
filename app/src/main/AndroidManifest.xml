@@ -37,6 +37,10 @@
         <activity android:name=".QuizActivity" />
         <activity android:name=".MarksActivity" />
         <activity android:name=".HomeworkActivity" />
+        <activity
+            android:name=".TeacherMainActivity"
+            android:exported="false" />
+
 
     </application>
 </manifest>
