@@ -2,10 +2,7 @@ package com.example.edulearn
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 
@@ -45,16 +42,22 @@ class StudentQuizActivity : AppCompatActivity() {
         tvCompleted = findViewById(R.id.tvQuizCompleted)
 
         rgOptions.setOnCheckedChangeListener { _, checkedId ->
-            val selectedText = findViewById<RadioButton>(checkedId)?.text?.toString() ?: return@setOnCheckedChangeListener
-            viewModel.selectAnswer(selectedText)
+            if (checkedId != -1) {
+                val selectedText = findViewById<RadioButton>(checkedId)?.text?.toString() ?: ""
+                viewModel.selectAnswer(selectedText)
+            }
         }
 
         btnNext.setOnClickListener {
-            viewModel.moveToNext()
+            if (rgOptions.checkedRadioButtonId == -1) {
+                Toast.makeText(this, "Please select an answer", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.moveToNext()
+                updateQuestionUi()
+            }
         }
 
         viewModel.questions.observe(this) { updateQuestionUi() }
-        viewModel.currentIndex.observe(this) { updateQuestionUi() }
         viewModel.currentScore.observe(this) { score ->
             tvScore.text = "Score: $score"
         }
@@ -75,28 +78,18 @@ class StudentQuizActivity : AppCompatActivity() {
             btnNext.visibility = View.GONE
             tvProgress.visibility = View.GONE
             tvCompleted.visibility = View.VISIBLE
-            tvCompleted.text = "Quiz completed!"
+            tvCompleted.text = "Quiz completed! Final Score: ${viewModel.currentScore.value}"
             viewModel.syncProgress(studentId, quizId, status = "Completed")
             return
         }
 
         tvQuestion.text = question.questionText
         tvProgress.text = "Question ${index + 1} / ${questions.size}"
-        rbA.text = question.optA
-        rbB.text = question.optB
-        rbC.text = question.optC
-        rbD.text = question.optD
+        rbA.text = "A. ${question.optA}"
+        rbB.text = "B. ${question.optB}"
+        rbC.text = "C. ${question.optC}"
+        rbD.text = "D. ${question.optD}"
         rgOptions.clearCheck()
         tvCompleted.visibility = View.GONE
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.syncProgress(studentId, quizId)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.syncProgress(studentId, quizId)
     }
 }
