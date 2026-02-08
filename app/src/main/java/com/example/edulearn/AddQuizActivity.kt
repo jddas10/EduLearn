@@ -16,6 +16,7 @@ class AddQuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_quiz)
 
+        val sessionManager = SessionManager(this)
         val titleField = findViewById<EditText>(R.id.etQuizTitle)
         val totalMarksField = findViewById<EditText>(R.id.etTotalMarks)
         val questionField = findViewById<EditText>(R.id.etQuestionText)
@@ -65,7 +66,9 @@ class AddQuizActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnSubmitQuiz).setOnClickListener {
             val title = titleField.text.toString().trim()
             val totalMarks = totalMarksField.text.toString().trim().toIntOrNull() ?: 0
-            val teacherId = intent.getIntExtra("teacher_id", 0)
+            val teacherId = intent.getIntExtra("teacher_id", 0).takeIf { it != 0 }
+                ?: sessionManager.getUsername()?.toIntOrNull()
+                ?: 1
 
             if (title.isEmpty() || totalMarks == 0) {
                 Toast.makeText(this, "Please enter quiz title and total marks.", Toast.LENGTH_SHORT).show()

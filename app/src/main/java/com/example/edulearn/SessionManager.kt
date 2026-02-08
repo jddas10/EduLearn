@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class SessionManager(context: Context) {
-
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -13,18 +12,17 @@ class SessionManager(context: Context) {
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_USERNAME = "username"
         private const val KEY_FULL_NAME = "full_name"
-
-        // ✅ NEW
         private const val KEY_ROLE = "role"
     }
 
-    fun saveSession(username: String, fullName: String?, role: String): Boolean {
+    // ✅ sync + verifiable
+    fun saveSession(username: String, fullName: String?, role: String? = null): Boolean {
         return prefs.edit()
             .putBoolean(KEY_IS_LOGGED_IN, true)
             .putString(KEY_USERNAME, username)
             .putString(KEY_FULL_NAME, fullName)
             .putString(KEY_ROLE, role)
-            .commit()
+            .commit() // IMPORTANT: synchronous write
     }
 
     fun isLoggedIn(): Boolean {
@@ -39,8 +37,8 @@ class SessionManager(context: Context) {
         return prefs.getString(KEY_FULL_NAME, null)
     }
 
-    fun getRole(): String {
-        return prefs.getString(KEY_ROLE, "") ?: ""
+    fun getRole(): String? {
+        return prefs.getString(KEY_ROLE, null)
     }
 
     fun logout(): Boolean {

@@ -21,29 +21,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sessionManager = SessionManager(this)
 
-        // ✅ if already logged in -> open dashboard based on role (clear back stack)
         if (sessionManager.isLoggedIn()) {
-
-            val nextActivity: Class<out AppCompatActivity> =
-                if (sessionManager.getRole() == "TEACHER")
-                    TeacherMainActivity::class.java
-                else
-                    MainActivity::class.java
-
-            startActivity(Intent(this, nextActivity).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
         }
 
-
         setContentView(R.layout.activity_login)
 
-        // ✅ role comes from RoleSelectionActivity
         loginRole = intent.getStringExtra("LOGIN_ROLE")?.uppercase() ?: "STUDENT"
 
         etUsername = findViewById(R.id.etUsername)
@@ -64,45 +51,32 @@ class LoginActivity : AppCompatActivity() {
 
         val loginRequest = LoginRequest(username, password, loginRole)
 
-        RetrofitClient.instance.loginUser(loginRequest)
-            .enqueue(object : Callback<AuthResponse> {
+        RetrofitClient.instance.loginUser(loginRequest).enqueue(object : Callback<AuthResponse> {
+            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                if (response.isSuccessful) {
+                    val auth = response.body()
+                    if (auth?.success == true) {
+                        val displayName = auth.name ?: username
+                        val roleToSave = auth.role ?: loginRole
+                        sessionManager.saveSession(username, displayName, roleToSave)
 
-                override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                    if (response.isSuccessful) {
-                        val auth = response.body()
-
-                        if (auth?.success == true) {
-                            val displayName = auth.name ?: username
-                            sessionManager.saveSession(username, displayName, loginRole)
-
-                            val next =
-                                if (loginRole == "TEACHER") TeacherMainActivity::class.java
-                                else MainActivity::class.java
-
-                            Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-
-                            startActivity(Intent(this@LoginActivity, next).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            })
-                            finish()
-                        } else {
-                            Toast.makeText(
-                                this@LoginActivity,
-                                auth?.message ?: "Login failed",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
                     } else {
-                        val errorMsg = response.errorBody()?.string()?.let {
-                            try { JSONObject(it).getString("message") } catch (e: Exception) { null }
-                        } ?: "Server Error"
-                        Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, auth?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    val errorMsg = response.errorBody()?.string()?.let {
+                        try { JSONObject(it).getString("message") } catch (e: Exception) { null }
+                    } ?: "Server Error"
+                    Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_SHORT).show()
                 }
+            }
 
-                override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                    Toast.makeText(this@LoginActivity, "Connection Error", Toast.LENGTH_SHORT).show()
-                }
-            })
+            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                Toast.makeText(this@LoginActivity, "Connection Error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

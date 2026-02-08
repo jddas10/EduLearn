@@ -26,6 +26,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".TeacherMainActivity"
+            android:exported="false" />
 
         <activity
             android:name=".LoginActivity"
@@ -35,12 +38,10 @@
         <activity android:name=".LiveLectureActivity" />
         <activity android:name=".RecordedLectureActivity" />
         <activity android:name=".QuizActivity" />
+        <activity android:name="com.example.edulearn.AddQuizActivity" />
+        <activity android:name=".StudentQuizActivity" />
         <activity android:name=".MarksActivity" />
         <activity android:name=".HomeworkActivity" />
-        <activity
-            android:name=".TeacherMainActivity"
-            android:exported="false" />
-
 
     </application>
 </manifest>
