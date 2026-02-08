@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/deep_navy"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,95 +14,209 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create Quiz"
-            android:textSize="20sp"
+            android:text="Quiz Architect"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/etQuizTitle"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Quiz Title"
-            android:inputType="text" />
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/glass_card"
+            android:elevation="0dp"
+            android:padding="16dp"
+            app:cardCornerRadius="18dp"
+            app:strokeColor="@color/glass_stroke"
+            app:strokeWidth="1dp">
 
-        <EditText
-            android:id="@+id/etTotalMarks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Total Marks"
-            android:inputType="number" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/etQuizTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Quiz Title"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
+
+                <EditText
+                    android:id="@+id/etTotalMarks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Total Marks"
+                    android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvQuestionCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:text="Questions added: 0" />
+            android:paddingTop="12dp"
+            android:text="Questions added: 0"
+            android:textColor="@color/text_secondary" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="16dp" />
 
-        <EditText
-            android:id="@+id/etQuestionText"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Question Text"
-            android:inputType="textMultiLine" />
+            android:backgroundTint="@color/glass_card"
+            android:elevation="0dp"
+            android:padding="16dp"
+            app:cardCornerRadius="18dp"
+            app:strokeColor="@color/glass_stroke"
+            app:strokeWidth="1dp">
 
-        <EditText
-            android:id="@+id/etOptA"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Option A"
-            android:inputType="text" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/etOptB"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Option B"
-            android:inputType="text" />
+                <EditText
+                    android:id="@+id/etQuestionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Question Text"
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
 
-        <EditText
-            android:id="@+id/etOptC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Option C"
-            android:inputType="text" />
+                <EditText
+                    android:id="@+id/etOptA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option A"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
 
-        <EditText
-            android:id="@+id/etOptD"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Option D"
-            android:inputType="text" />
+                <EditText
+                    android:id="@+id/etOptB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option B"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
 
-        <EditText
-            android:id="@+id/etCorrectOpt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Correct Option (A/B/C/D)"
-            android:inputType="text" />
+                <EditText
+                    android:id="@+id/etOptC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option C"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
 
-        <EditText
-            android:id="@+id/etQuestionMarks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Marks for this question"
-            android:inputType="number" />
+                <EditText
+                    android:id="@+id/etOptD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Option D"
+                    android:inputType="text"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
 
-        <Button
-            android:id="@+id/btnAddQuestion"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:text="Set Correct Answer"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <RadioGroup
+                    android:id="@+id/rgCorrectOpt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbCorrectA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="A"
+                        android:text="A"
+                        android:textColor="@color/text_primary" />
+
+                    <RadioButton
+                        android:id="@+id/rbCorrectB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="B"
+                        android:text="B"
+                        android:textColor="@color/text_primary" />
+
+                    <RadioButton
+                        android:id="@+id/rbCorrectC"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="C"
+                        android:text="C"
+                        android:textColor="@color/text_primary" />
+
+                    <RadioButton
+                        android:id="@+id/rbCorrectD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="D"
+                        android:text="D"
+                        android:textColor="@color/text_primary" />
+                </RadioGroup>
+
+                <EditText
+                    android:id="@+id/etQuestionMarks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Marks for this question"
+                    android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
+
+                <Button
+                    android:id="@+id/btnAddQuestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:backgroundTint="@color/neon_blue"
+                    android:text="Add Question"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Question" />
+            android:layout_marginTop="16dp"
+            android:text="Swipe a card to delete"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvQuestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:overScrollMode="never" />
 
         <Button
             android:id="@+id/btnSubmitQuiz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit Quiz" />
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neon_purple"
+            android:text="Submit Quiz"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </ScrollView>

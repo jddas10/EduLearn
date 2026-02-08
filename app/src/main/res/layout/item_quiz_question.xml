@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardQuestion"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:backgroundTint="@color/glass_card"
+    android:elevation="0dp"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.Material3.Dark"
+    app:cardCornerRadius="18dp"
+    app:strokeColor="@color/glass_stroke"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvQuestionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Question title"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvQuestionMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:text="Correct: A • Marks: 5"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvOptionA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="A. Option"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tvOptionB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="B. Option"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tvOptionC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="C. Option"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tvOptionD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="D. Option"
+            android:textColor="@color/text_primary" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

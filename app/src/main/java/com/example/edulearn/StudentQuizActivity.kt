@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 class StudentQuizActivity : AppCompatActivity() {
 
@@ -15,6 +16,7 @@ class StudentQuizActivity : AppCompatActivity() {
     private lateinit var tvQuestion: TextView
     private lateinit var tvProgress: TextView
     private lateinit var tvScore: TextView
+    private lateinit var progressIndicator: LinearProgressIndicator
     private lateinit var rgOptions: RadioGroup
     private lateinit var rbA: RadioButton
     private lateinit var rbB: RadioButton
@@ -33,6 +35,7 @@ class StudentQuizActivity : AppCompatActivity() {
         tvQuestion = findViewById(R.id.tvStudentQuestion)
         tvProgress = findViewById(R.id.tvStudentProgress)
         tvScore = findViewById(R.id.tvStudentScore)
+        progressIndicator = findViewById(R.id.progressStudentQuiz)
         rgOptions = findViewById(R.id.rgOptions)
         rbA = findViewById(R.id.rbOptionA)
         rbB = findViewById(R.id.rbOptionB)
@@ -53,6 +56,7 @@ class StudentQuizActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please select an answer", Toast.LENGTH_SHORT).show()
             } else {
                 viewModel.moveToNext()
+                viewModel.syncProgress(studentId, quizId, status = "Started")
                 updateQuestionUi()
             }
         }
@@ -77,6 +81,7 @@ class StudentQuizActivity : AppCompatActivity() {
             rgOptions.visibility = View.GONE
             btnNext.visibility = View.GONE
             tvProgress.visibility = View.GONE
+            progressIndicator.visibility = View.GONE
             tvCompleted.visibility = View.VISIBLE
             tvCompleted.text = "Quiz completed! Final Score: ${viewModel.currentScore.value}"
             viewModel.syncProgress(studentId, quizId, status = "Completed")
@@ -84,12 +89,23 @@ class StudentQuizActivity : AppCompatActivity() {
         }
 
         tvQuestion.text = question.questionText
-        tvProgress.text = "Question ${index + 1} / ${questions.size}"
+        tvProgress.text = "Question ${index + 1} of ${questions.size}"
         rbA.text = "A. ${question.optA}"
         rbB.text = "B. ${question.optB}"
         rbC.text = "C. ${question.optC}"
         rbD.text = "D. ${question.optD}"
+        progressIndicator.max = questions.size
+        progressIndicator.progress = index + 1
         rgOptions.clearCheck()
         tvCompleted.visibility = View.GONE
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val questions = viewModel.questions.value.orEmpty()
+        val index = viewModel.currentIndex.value ?: 0
+        if (quizId != 0 && index < questions.size) {
+            viewModel.syncProgress(studentId, quizId, status = "Started")
+        }
     }
 }

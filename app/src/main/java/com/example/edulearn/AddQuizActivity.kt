@@ -3,14 +3,20 @@ package com.example.edulearn
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class AddQuizActivity : AppCompatActivity() {
 
     private val viewModel: AddQuizViewModel by viewModels()
+    private lateinit var questionAdapter: QuizQuestionAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +30,32 @@ class AddQuizActivity : AppCompatActivity() {
         val optBField = findViewById<EditText>(R.id.etOptB)
         val optCField = findViewById<EditText>(R.id.etOptC)
         val optDField = findViewById<EditText>(R.id.etOptD)
-        val correctOptField = findViewById<EditText>(R.id.etCorrectOpt)
+        val correctOptGroup = findViewById<RadioGroup>(R.id.rgCorrectOpt)
         val marksField = findViewById<EditText>(R.id.etQuestionMarks)
         val questionCount = findViewById<TextView>(R.id.tvQuestionCount)
+        val recyclerView = findViewById<RecyclerView>(R.id.rvQuestions)
+
+        questionAdapter = QuizQuestionAdapter(emptyList()) { position ->
+            viewModel.removeQuestion(position)
+        }
+
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@AddQuizActivity)
+            adapter = questionAdapter
+            isNestedScrollingEnabled = false
+        }
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewModel.removeQuestion(viewHolder.adapterPosition)
+            }
+        }).attachToRecyclerView(recyclerView)
 
         findViewById<Button>(R.id.btnAddQuestion).setOnClickListener {
             val questionText = questionField.text.toString().trim()
@@ -34,11 +63,21 @@ class AddQuizActivity : AppCompatActivity() {
             val optB = optBField.text.toString().trim()
             val optC = optCField.text.toString().trim()
             val optD = optDField.text.toString().trim()
-            val correctOpt = correctOptField.text.toString().trim().uppercase()
+            val selectedCorrectId = correctOptGroup.checkedRadioButtonId
+            val correctOpt = if (selectedCorrectId != -1) {
+                findViewById<RadioButton>(selectedCorrectId).tag?.toString()?.uppercase()
+            } else {
+                null
+            }
             val marks = marksField.text.toString().trim().toIntOrNull() ?: 0
 
             if (questionText.isEmpty() || optA.isEmpty() || optB.isEmpty() || optC.isEmpty() || optD.isEmpty()) {
                 Toast.makeText(this, "Please fill all question fields.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (correctOpt.isNullOrEmpty()) {
+                Toast.makeText(this, "Please select the correct option.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -59,7 +98,7 @@ class AddQuizActivity : AppCompatActivity() {
             optBField.text?.clear()
             optCField.text?.clear()
             optDField.text?.clear()
-            correctOptField.text?.clear()
+            correctOptGroup.clearCheck()
             marksField.text?.clear()
         }
 
@@ -80,6 +119,7 @@ class AddQuizActivity : AppCompatActivity() {
 
         viewModel.questions.observe(this) { questions ->
             questionCount.text = "Questions added: ${questions.size}"
+            questionAdapter.submitList(questions)
         }
 
         viewModel.submissionStatus.observe(this) { message ->

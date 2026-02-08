@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/deep_navy"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressStudentQuiz"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginBottom="16dp"
+        android:indeterminate="false"
+        app:indicatorColor="@color/neon_blue"
+        app:trackColor="@color/glass_stroke" />
 
     <TextView
         android:id="@+id/tvStudentProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Question 1 / 1"
+        android:text="Question 1 of 1"
+        android:textColor="@color/text_secondary"
         android:textStyle="bold" />
 
     <TextView
@@ -17,15 +29,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
-        android:text="Score: 0" />
+        android:text="Score: 0"
+        android:textColor="@color/text_secondary" />
 
-    <TextView
-        android:id="@+id/tvStudentQuestion"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text="Question"
-        android:textSize="18sp" />
+        android:layout_marginTop="18dp"
+        android:backgroundTint="@color/glass_card"
+        android:elevation="0dp"
+        android:padding="18dp"
+        app:cardCornerRadius="20dp"
+        app:strokeColor="@color/glass_stroke"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:id="@+id/tvStudentQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Question"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
 
     <RadioGroup
         android:id="@+id/rgOptions"
@@ -37,32 +63,39 @@
             android:id="@+id/rbOptionA"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option A" />
+            android:text="Option A"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbOptionB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option B" />
+            android:text="Option B"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbOptionC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option C" />
+            android:text="Option C"
+            android:textColor="@color/text_primary" />
 
         <RadioButton
             android:id="@+id/rbOptionD"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Option D" />
+            android:text="Option D"
+            android:textColor="@color/text_primary" />
     </RadioGroup>
 
     <Button
         android:id="@+id/btnNextQuestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next" />
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/neon_blue"
+        android:text="Next"
+        android:textColor="@color/black" />
 
     <TextView
         android:id="@+id/tvQuizCompleted"
@@ -72,6 +105,7 @@
         android:paddingTop="24dp"
         android:text="Quiz completed!"
         android:textSize="18sp"
+        android:textColor="@color/text_primary"
         android:visibility="gone" />
 
 </LinearLayout>

@@ -20,6 +20,14 @@ class AddQuizViewModel : ViewModel() {
         _questions.value = updated
     }
 
+    fun removeQuestion(position: Int) {
+        val updated = _questions.value.orEmpty().toMutableList()
+        if (position in updated.indices) {
+            updated.removeAt(position)
+            _questions.value = updated
+        }
+    }
+
     fun submitQuiz(teacherId: Int, title: String, totalMarks: Int, quizId: Int? = null) {
         val request = QuizCreateRequest(
             quizId = quizId,
@@ -34,10 +42,11 @@ class AddQuizViewModel : ViewModel() {
                 call: Call<QuizCreateResponse>,
                 response: Response<QuizCreateResponse>
             ) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    _submissionStatus.value = "Quiz saved (ID: ${response.body()?.quizId})"
+                val body = response.body()
+                if (response.isSuccessful && body?.success == true) {
+                    _submissionStatus.value = "Quiz saved (ID: ${body.quizId})"
                 } else {
-                    _submissionStatus.value = "Failed to save quiz"
+                    _submissionStatus.value = body?.message ?: "Failed to save quiz"
                 }
             }
 
