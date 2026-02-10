@@ -1,5 +1,6 @@
 package com.example.edulearn
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class AddQuizViewModel : ViewModel() {
+
     private val _questions = MutableLiveData<List<QuizQuestionPayload>>(emptyList())
     val questions: LiveData<List<QuizQuestionPayload>> = _questions
 
@@ -29,21 +31,35 @@ class AddQuizViewModel : ViewModel() {
     }
 
     fun submitQuiz(teacherId: Int, title: String, totalMarks: Int, quizId: Int? = null) {
+        val qs = _questions.value.orEmpty()
+        if (qs.isEmpty()) {
+            _submissionStatus.value = "Add at least 1 question"
+            return
+        }
+
         val request = QuizCreateRequest(
             quizId = quizId,
             teacherId = teacherId,
             title = title,
             totalMarks = totalMarks,
-            questions = _questions.value.orEmpty()
+            questions = qs
         )
 
         RetrofitClient.instance.createQuiz(request).enqueue(object : Callback<QuizCreateResponse> {
-            override fun onResponse(
-                call: Call<QuizCreateResponse>,
-                response: Response<QuizCreateResponse>
-            ) {
+            override fun onResponse(call: Call<QuizCreateResponse>, response: Response<QuizCreateResponse>) {
+                Log.d("QUIZ_API", "HTTP ${response.code()}")
+
+                if (!response.isSuccessful) {
+                    val err = response.errorBody()?.string()
+                    Log.e("QUIZ_API", "ErrorBody: $err")
+                    _submissionStatus.value = "Failed: HTTP ${response.code()} ${err ?: ""}"
+                    return
+                }
+
                 val body = response.body()
-                if (response.isSuccessful && body?.success == true) {
+                Log.d("QUIZ_API", "Body: $body")
+
+                if (body?.success == true) {
                     _submissionStatus.value = "Quiz saved (ID: ${body.quizId})"
                 } else {
                     _submissionStatus.value = body?.message ?: "Failed to save quiz"
@@ -51,6 +67,7 @@ class AddQuizViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<QuizCreateResponse>, t: Throwable) {
+                Log.e("QUIZ_API", "Failure: ${t.message}", t)
                 _submissionStatus.value = "Network error: ${t.localizedMessage}"
             }
         })

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,13 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -29,8 +25,6 @@ class MainActivity : AppCompatActivity() {
     private val ANIMATION_DURATION = 900L
     private val STAGGER_DELAY = 150L
 
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private val RC_SIGN_IN = 1001
     private lateinit var sessionManager: SessionManager
     private lateinit var drawerLayout: DrawerLayout
 
@@ -56,12 +50,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         drawerLayout = findViewById(R.id.drawerLayout)
         val navView = findViewById<NavigationView>(R.id.navView)
@@ -131,7 +119,30 @@ class MainActivity : AppCompatActivity() {
         btnAttendance.setOnClickListener { safeStart(AttendanceActivity::class.java) }
         btnLive.setOnClickListener { safeStart(LiveLectureActivity::class.java) }
         btnRecorded.setOnClickListener { safeStart(RecordedLectureActivity::class.java) }
-        btnQuiz.setOnClickListener { safeStart(QuizActivity::class.java) }
+
+        btnQuiz.setOnClickListener {
+            val input = EditText(this)
+            input.hint = "Enter Quiz ID (e.g. 1)"
+            input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Start Quiz")
+                .setMessage("Take ID from your teacher")
+                .setView(input)
+                .setPositiveButton("Start") { _, _ ->
+                    val quizId = input.text.toString().trim().toIntOrNull() ?: 0
+                    if (quizId == 0) {
+                        Toast.makeText(this, "Invalid Quiz ID", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    val i = Intent(this, StudentQuizActivity::class.java)
+                    i.putExtra("quiz_id", quizId)
+                    startActivity(i)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+
         btnMarks.setOnClickListener { safeStart(MarksActivity::class.java) }
         btnHomework.setOnClickListener { safeStart(HomeworkActivity::class.java) }
 
@@ -151,44 +162,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun performLogout() {
-        googleSignInClient.signOut().addOnCompleteListener(this) {
-            sessionManager.logout()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun signInWithGoogle() {
-        val intent = googleSignInClient.signInIntent
-        startActivityForResult(intent, RC_SIGN_IN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                onGoogleSignInSuccess(account)
-            } catch (e: ApiException) {
-                val code = e.statusCode
-                val msg = GoogleSignInStatusCodes.getStatusCodeString(code)
-                Toast.makeText(this, "Google sign-in failed: $msg ($code)", Toast.LENGTH_LONG).show()
-                Log.e(TAG, "Google sign-in error: $msg ($code)", e)
-            }
-        }
-    }
-
-    private fun onGoogleSignInSuccess(account: GoogleSignInAccount?) {
-        val name = account?.displayName ?: "User"
-        val prefs = getSharedPreferences("edulearn_prefs", MODE_PRIVATE)
-        prefs.edit().putString("user_name", name).apply()
-        updateWelcomeName()
-        Toast.makeText(this, "Logged in as $name", Toast.LENGTH_SHORT).show()
+        sessionManager.logout()
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateWelcomeName() {

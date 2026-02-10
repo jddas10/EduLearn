@@ -19,6 +19,12 @@
     <color name="purple_200">#FFBB86FC</color>
     <color name="black">#FF000000</color>
 
-    <!-- ADD THIS LINE -->
+
     <color name="white">#FFFFFFFF</color>
+
+
+        <color name="accent_gradient_start">#3A7BD5</color>
+        <color name="accent_gradient_end">#00D2FF</color>
+
+
 </resources>
