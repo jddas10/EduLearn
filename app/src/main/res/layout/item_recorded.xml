@@ -36,37 +36,53 @@
             android:id="@+id/txtSubject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mathematics I"
-            android:textColor="#B6C2D0"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp"/>
-        <TextView
-            android:id="@+id/txtDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="5 Nov"
+            android:text="Subject"
             android:textColor="#B6C2D0"
             android:textSize="12sp"
             android:layout_marginTop="2dp"/>
 
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="#B6C2D0"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"/>
 
         <TextView
             android:id="@+id/txtDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="45 mins"
+            android:text=""
             android:textColor="#B6C2D0"
             android:textSize="12sp"
-            android:layout_marginTop="6dp"/>
+            android:layout_marginTop="6dp"
+            android:visibility="gone"/>
 
-        <ImageView
-            android:id="@+id/imgBookmark"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_bookmark"
-            app:tint="#A7BACB"
-            android:layout_marginTop="6dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="6dp">
+
+            <ImageView
+                android:id="@+id/imgBookmark"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_bookmark"
+                app:tint="#A7BACB" />
+
+            <ImageView
+                android:id="@+id/imgDelete"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                android:src="@android:drawable/ic_menu_delete"
+                app:tint="#A7BACB"
+                android:visibility="gone"/>
+        </LinearLayout>
 
     </LinearLayout>
 

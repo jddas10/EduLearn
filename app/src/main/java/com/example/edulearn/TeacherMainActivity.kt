@@ -3,10 +3,10 @@ package com.example.edulearn
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.Toast
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -21,9 +21,10 @@ class TeacherMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        RetrofitClient.init(this)
         sessionManager = SessionManager(this)
 
-        if (!sessionManager.isLoggedIn() || sessionManager.getRole() != "TEACHER") {
+        if (!sessionManager.isLoggedIn() || (sessionManager.getRole() ?: "").uppercase() != "TEACHER") {
             startActivity(Intent(this, RoleSelectionActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
@@ -41,11 +42,15 @@ class TeacherMainActivity : AppCompatActivity() {
         val navView = findViewById<NavigationView>(R.id.navView)
         val menuIcon = findViewById<ImageView>(R.id.menuIcon)
         val settingsIcon = findViewById<ImageView>(R.id.settingsIcon)
-        val btnQuiz = findViewById<Button>(R.id.btnQuiz)
 
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
+        val btnAttendance = findViewById<Button>(R.id.btnAttendance)
+        val btnRecorded = findViewById<Button>(R.id.btnRecorded)
+        val btnLive = findViewById<Button>(R.id.btnLive)
+        val btnQuiz = findViewById<Button>(R.id.btnQuiz)
+        val btnMarks = findViewById<Button>(R.id.btnMarks)
+        val btnHomework = findViewById<Button>(R.id.btnHomework)
+
+        menuIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -67,12 +72,21 @@ class TeacherMainActivity : AppCompatActivity() {
             btnChangeTheme?.setOnClickListener { dialog.dismiss() }
         }
 
+        btnRecorded.setOnClickListener { safeStart(RecordedLectureActivity::class.java) }
+        btnLive.setOnClickListener { safeStart(LiveLectureActivity::class.java) }
+        btnAttendance.setOnClickListener { safeStart(TeacherAttendanceActivity::class.java) }
+        btnMarks.setOnClickListener { safeStart(MarksActivity::class.java) }
+        btnHomework.setOnClickListener { safeStart(HomeworkActivity::class.java) }
+
         btnQuiz.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Quiz Options")
                 .setMessage("Create a new quiz?")
                 .setPositiveButton("Create Quiz") { _, _ ->
-                    safeStart(AddQuizActivity::class.java)
+                    val intent = Intent(this, AddQuizActivity::class.java)
+                    val teacherId = sessionManager.getUserId()
+                    intent.putExtra("teacher_id", if (teacherId == 0) 1 else teacherId)
+                    startActivity(intent)
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -81,14 +95,9 @@ class TeacherMainActivity : AppCompatActivity() {
 
     private fun safeStart(target: Class<*>) {
         try {
-            val intent = Intent(this, target)
-            if (target == AddQuizActivity::class.java) {
-                val teacherId = sessionManager.getUsername()?.toIntOrNull() ?: 1
-                intent.putExtra("teacher_id", teacherId)
-            }
-            startActivity(intent)
+            startActivity(Intent(this, target))
         } catch (e: Exception) {
-            Toast.makeText(this, "Unable to open screen: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Unable to open: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        RetrofitClient.init(this)
+
         sessionManager = SessionManager(this)
         if (!sessionManager.isLoggedIn()) {
             val intent = Intent(this, RoleSelectionActivity::class.java).apply {
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (sessionManager.getRole() == "TEACHER") {
+        if ((sessionManager.getRole() ?: "").uppercase() == "TEACHER") {
             startActivity(Intent(this, TeacherMainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
@@ -116,10 +118,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        btnAttendance.setOnClickListener { safeStart(AttendanceActivity::class.java) }
         btnLive.setOnClickListener { safeStart(LiveLectureActivity::class.java) }
         btnRecorded.setOnClickListener { safeStart(RecordedLectureActivity::class.java) }
-
+        btnAttendance.setOnClickListener { safeStart(StudentAttendanceActivity::class.java) }
         btnQuiz.setOnClickListener {
             val input = EditText(this)
             input.hint = "Enter Quiz ID (e.g. 1)"

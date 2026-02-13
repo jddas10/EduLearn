@@ -3,6 +3,9 @@
     package="com.example.edulearn">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -23,25 +26,31 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TeacherMainActivity"
-            android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".TeacherMainActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" />
 
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-
-        <activity android:name=".AttendanceActivity" />
         <activity android:name=".LiveLectureActivity" />
         <activity android:name=".RecordedLectureActivity" />
         <activity android:name=".QuizActivity" />
-        <activity android:name="com.example.edulearn.AddQuizActivity" />
+        <activity android:name=".AddQuizActivity" />
         <activity android:name=".StudentQuizActivity" />
         <activity android:name=".MarksActivity" />
         <activity android:name=".HomeworkActivity" />
+        <activity android:name=".VideoPlayerActivity" />
+        <activity android:name=".TeacherAttendanceActivity" />
+        <activity android:name=".StudentAttendanceActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
+
 </manifest>

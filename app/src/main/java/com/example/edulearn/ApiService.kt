@@ -1,85 +1,18 @@
 package com.example.edulearn
 
+import com.example.edulearn.model.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-
-data class LoginRequest(
-    val username: String,
-    val password: String,
-    val role: String
-)
-
-data class AuthResponse(
-    val success: Boolean,
-    val token: String?,
-    val message: String?,
-    val name: String?,
-    val role: String?,
-    val id: Int? = null
-)
-
-data class QuizQuestionPayload(
-    val questionText: String,
-    val optA: String,
-    val optB: String,
-    val optC: String,
-    val optD: String,
-    val correctOpt: String,
-    val marks: Int
-)
-
-data class QuizCreateRequest(
-    val quizId: Int? = null,
-    val teacherId: Int,
-    val title: String,
-    val totalMarks: Int,
-    val questions: List<QuizQuestionPayload>
-)
-
-data class QuizCreateResponse(
-    val success: Boolean,
-    val quizId: Int?,
-    val message: String?
-)
-
-data class QuizProgressRequest(
-    val studentId: Int,
-    val quizId: Int,
-    val currentScore: Int,
-    val status: String = "Started"
-)
-
-data class QuizProgressResponse(
-    val success: Boolean,
-    val message: String?
-)
-
-data class QuizQuestionDto(
-    val id: Int,
-    val questionText: String,
-    val optA: String,
-    val optB: String,
-    val optC: String,
-    val optD: String,
-    val correctOpt: String,
-    val marks: Int
-)
-
-data class QuizDetailResponse(
-    val success: Boolean,
-    val quizId: Int,
-    val title: String,
-    val totalMarks: Int,
-    val questions: List<QuizQuestionDto>
-)
+import retrofit2.http.*
 
 interface ApiService {
+
+    // ===== AUTH =====
     @POST("auth/login")
     fun loginUser(@Body request: LoginRequest): Call<AuthResponse>
 
+    // ===== QUIZ =====
     @POST("api/quiz/create")
     fun createQuiz(@Body request: QuizCreateRequest): Call<QuizCreateResponse>
 
@@ -88,4 +21,54 @@ interface ApiService {
 
     @GET("api/quiz/{quizId}")
     fun getQuiz(@Path("quizId") quizId: Int): Call<QuizDetailResponse>
+
+    // ===== LECTURES =====
+    @GET("lectures")
+    fun getLectures(): Call<LecturesResponse>
+
+    @POST("bookmarks/toggle")
+    fun toggleBookmark(@Body req: ToggleBookmarkRequest): Call<ToggleBookmarkResponse>
+
+    @Multipart
+    @POST("lectures/upload")
+    fun uploadLecture(
+        @Part video: MultipartBody.Part,
+        @Part("title") title: RequestBody,
+        @Part("subject") subject: RequestBody,
+        @Part("category") category: RequestBody
+    ): Call<Any>
+
+    @DELETE("lectures/{id}")
+    fun deleteLecture(@Path("id") id: Int): Call<SimpleResponse>
+
+    // ===== ATTENDANCE =====
+    @POST("attendance/start")
+    fun attendanceStart(
+        @Header("Authorization") bearer: String,
+        @Body req: AttendanceStartRequest
+    ): Call<AttendanceStartResponse>
+
+    @POST("attendance/nonce")
+    fun attendanceNonce(
+        @Header("Authorization") bearer: String,
+        @Body req: AttendanceNonceRequest
+    ): Call<AttendanceNonceResponse>
+
+    @POST("attendance/close")
+    fun attendanceClose(
+        @Header("Authorization") bearer: String,
+        @Body req: AttendanceCloseRequest
+    ): Call<AttendanceCloseResponse>
+
+    @POST("attendance/mark")
+    fun attendanceMark(
+        @Header("Authorization") bearer: String,
+        @Body req: AttendanceMarkRequest
+    ): Call<AttendanceMarkResponse>
+
+    @GET("attendance/sessions")
+    fun attendanceSessions(
+        @Header("Authorization") bearer: String,
+        @Query("date") date: String
+    ): Call<AttendanceSessionsResponse>
 }

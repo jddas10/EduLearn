@@ -21,6 +21,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        RetrofitClient.init(this)
         sessionManager = SessionManager(this)
 
         if (sessionManager.isLoggedIn()) {
@@ -57,8 +59,11 @@ class LoginActivity : AppCompatActivity() {
                     val auth = response.body()
                     if (auth?.success == true) {
                         val displayName = auth.name ?: username
-                        val roleToSave = auth.role ?: loginRole
-                        sessionManager.saveSession(username, displayName, roleToSave)
+                        val roleToSave = (auth.role ?: loginRole).uppercase()
+                        val token = auth.token ?: ""
+                        val uid = auth.userId ?: 0
+
+                        sessionManager.saveSession(username, displayName, roleToSave, token, uid)
 
                         Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
