@@ -1,4 +1,4 @@
-package com.example.edulearn.model
+package com.example.edulearn
 
 data class ToggleBookmarkResponse(
     val success: Boolean,

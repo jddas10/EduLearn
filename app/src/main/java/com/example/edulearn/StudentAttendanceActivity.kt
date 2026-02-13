@@ -1,17 +1,19 @@
 package com.example.edulearn
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,122 +21,127 @@ import retrofit2.Response
 class StudentAttendanceActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
-    private lateinit var tvStatus: TextView
-    private lateinit var btnScan: Button
+    private val fused by lazy { LocationServices.getFusedLocationProviderClient(this) }
 
-    private val locationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
-
-    private val scanLauncher = registerForActivityResult(ScanContract()) { result ->
-        val text = result.contents ?: return@registerForActivityResult
-        val parts = text.split("|")
-        if (parts.size < 4 || parts[0] != "EDULEARN") {
-            Toast.makeText(this, "Invalid QR", Toast.LENGTH_SHORT).show()
-            return@registerForActivityResult
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { perms ->
+            val fine = perms[Manifest.permission.ACCESS_FINE_LOCATION] == true
+            val coarse = perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            if (fine || coarse) {
+                ensureGpsThenFetch()
+            } else {
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
         }
-        val sessionId = parts[1]
-        val nonce = parts[2]
-        markAttendance(sessionId, nonce)
-    }
-
-    private val requestPerms = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { perms ->
-        val camOk = perms[Manifest.permission.CAMERA] == true
-        val locOk = perms[Manifest.permission.ACCESS_FINE_LOCATION] == true || perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-        if (camOk && locOk) startScan()
-        else Toast.makeText(this, "Camera + Location permissions required", Toast.LENGTH_SHORT).show()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         RetrofitClient.init(this)
         sessionManager = SessionManager(this)
         setContentView(R.layout.activity_student_attendance)
-
-        tvStatus = findViewById(R.id.tvStatus)
-        btnScan = findViewById(R.id.btnScanQr)
-
-        btnScan.setOnClickListener { ensurePermissionsAndScan() }
+        ensureLocationFlow()
     }
 
-    private fun ensurePermissionsAndScan() {
-        val camGranted = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-        val fineGranted = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val coarseGranted = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun ensureLocationFlow() {
+        val fineGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val coarseGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-        if (camGranted && (fineGranted || coarseGranted)) {
-            startScan()
-            return
-        }
-
-        requestPerms.launch(
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+        if (fineGranted || coarseGranted) {
+            ensureGpsThenFetch()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
             )
-        )
+        }
     }
 
-    private fun startScan() {
-        val options = ScanOptions()
-        options.setPrompt("Scan Attendance QR")
-        options.setBeepEnabled(true)
-        options.setOrientationLocked(true)
-        options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-        options.setBarcodeImageEnabled(false)
-        scanLauncher.launch(options)
-    }
-
-    private fun markAttendance(sessionId: String, nonce: String) {
-        if (sessionManager.getToken().isNullOrBlank()) {
-            Toast.makeText(this, "Login again", Toast.LENGTH_SHORT).show()
+    private fun ensureGpsThenFetch() {
+        if (!isLocationEnabled()) {
+            Toast.makeText(this, "Turn on Location (GPS)", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             return
         }
 
-        tvStatus.text = "Getting location..."
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        ) {
-            tvStatus.text = "Location permission missing"
-            return
-        }
-
-        locationClient.lastLocation.addOnSuccessListener { loc ->
-            if (loc == null) {
-                tvStatus.text = "Location not available"
-                return@addOnSuccessListener
+        fetchFreshLocation { lat, lng, acc ->
+            val sessionId = intent.getStringExtra("sessionId") ?: ""
+            val nonce = intent.getStringExtra("nonce") ?: ""
+            if (sessionId.isBlank() || nonce.isBlank()) {
+                Toast.makeText(this, "Invalid session", Toast.LENGTH_SHORT).show()
+                return@fetchFreshLocation
             }
 
-            val req = AttendanceMarkRequest(
+            val deviceId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID) ?: "unknown"
+            markAttendance(sessionId, nonce, lat, lng, acc, deviceId)
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun fetchFreshLocation(onResult: (Double, Double, Int) -> Unit) {
+        val tokenSource = CancellationTokenSource()
+
+        fused.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, tokenSource.token)
+            .addOnSuccessListener { loc ->
+                if (loc != null) {
+                    onResult(loc.latitude, loc.longitude, loc.accuracy.toInt())
+                } else {
+                    val req = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0)
+                        .setMaxUpdates(1)
+                        .build()
+
+                    fused.requestLocationUpdates(req, object : com.google.android.gms.location.LocationCallback() {
+                        override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
+                            fused.removeLocationUpdates(this)
+                            val l = result.lastLocation
+                            if (l == null) {
+                                Toast.makeText(this@StudentAttendanceActivity, "Location not available, try again", Toast.LENGTH_SHORT).show()
+                            } else {
+                                onResult(l.latitude, l.longitude, l.accuracy.toInt())
+                            }
+                        }
+                    }, mainLooper)
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Location error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun markAttendance(sessionId: String, nonce: String, lat: Double, lng: Double, acc: Int, deviceId: String) {
+        RetrofitClient.instance.attendanceMark(
+            AttendanceMarkRequest(
                 sessionId = sessionId,
                 nonce = nonce,
-                lat = loc.latitude,
-                lng = loc.longitude,
-                accuracyM = loc.accuracy.toInt(),
-                deviceId = sessionManager.getOrCreateDeviceId()
+                lat = lat,
+                lng = lng,
+                accuracyM = acc,
+                deviceId = deviceId
             )
+        ).enqueue(object : Callback<AttendanceMarkResponse> {
+            override fun onResponse(call: Call<AttendanceMarkResponse>, response: Response<AttendanceMarkResponse>) {
+                val body = response.body()
+                if (response.isSuccessful && body != null && body.success) {
+                    Toast.makeText(this@StudentAttendanceActivity, body.message ?: "Marked", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@StudentAttendanceActivity, body?.message ?: "Mark failed", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-            tvStatus.text = "Marking attendance..."
+            override fun onFailure(call: Call<AttendanceMarkResponse>, t: Throwable) {
+                Toast.makeText(this@StudentAttendanceActivity, "Connection error", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
-            RetrofitClient.instance.attendanceMark(req)
-                .enqueue(object : Callback<AttendanceMarkResponse> {
-                    override fun onResponse(call: Call<AttendanceMarkResponse>, response: Response<AttendanceMarkResponse>) {
-                        val body = response.body()
-                        if (response.isSuccessful && body?.success == true) {
-                            tvStatus.text = body.message ?: "Attendance marked"
-                        } else {
-                            tvStatus.text = body?.message ?: "Failed"
-                        }
-                    }
-
-                    override fun onFailure(call: Call<AttendanceMarkResponse>, t: Throwable) {
-                        tvStatus.text = "Connection error"
-                    }
-                })
-        }.addOnFailureListener {
-            tvStatus.text = "Location error"
-        }
+    override fun onResume() {
+        super.onResume()
+        ensureLocationFlow()
     }
 }

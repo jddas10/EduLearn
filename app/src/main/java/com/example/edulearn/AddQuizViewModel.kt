@@ -48,17 +48,12 @@ class AddQuizViewModel : ViewModel() {
         RetrofitClient.instance.createQuiz(request).enqueue(object : Callback<QuizCreateResponse> {
             override fun onResponse(call: Call<QuizCreateResponse>, response: Response<QuizCreateResponse>) {
                 Log.d("QUIZ_API", "HTTP ${response.code()}")
-
                 if (!response.isSuccessful) {
                     val err = response.errorBody()?.string()
-                    Log.e("QUIZ_API", "ErrorBody: $err")
                     _submissionStatus.value = "Failed: HTTP ${response.code()} ${err ?: ""}"
                     return
                 }
-
                 val body = response.body()
-                Log.d("QUIZ_API", "Body: $body")
-
                 if (body?.success == true) {
                     _submissionStatus.value = "Quiz saved (ID: ${body.quizId})"
                 } else {
@@ -67,7 +62,6 @@ class AddQuizViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<QuizCreateResponse>, t: Throwable) {
-                Log.e("QUIZ_API", "Failure: ${t.message}", t)
                 _submissionStatus.value = "Network error: ${t.localizedMessage}"
             }
         })

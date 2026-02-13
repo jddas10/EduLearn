@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.edulearn.LectureModel
 import com.example.edulearn.R
-import com.example.edulearn.model.LectureModel
 
 class RecordedAdapter(
     private var list: List<LectureModel>,
@@ -23,7 +23,7 @@ class RecordedAdapter(
         val txtDate: TextView = v.findViewById(R.id.txtDate)
         val imgPlay: ImageView = v.findViewById(R.id.imgIcon)
         val imgBookmark: ImageView = v.findViewById(R.id.imgBookmark)
-        val imgDelete: ImageView? = v.findViewById(R.id.imgDelete) // agar layout me hai
+        val imgDelete: ImageView? = v.findViewById(R.id.imgDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

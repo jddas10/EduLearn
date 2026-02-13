@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -14,11 +13,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.edulearn.adapter.RecordedAdapter
-import com.example.edulearn.model.LectureModel
-import com.example.edulearn.model.LecturesResponse
-import com.example.edulearn.model.SimpleResponse
-import com.example.edulearn.model.ToggleBookmarkRequest
-import com.example.edulearn.model.ToggleBookmarkResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -39,17 +33,14 @@ class RecordedLectureActivity : AppCompatActivity() {
 
     private val fullList = mutableListOf<LectureModel>()
 
-    private val pickVideo =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            if (uri != null) showMetaDialogAndUpload(uri)
-        }
+    private val pickVideo = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        if (uri != null) showMetaDialogAndUpload(uri)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         RetrofitClient.init(this)
         sessionManager = SessionManager(this)
-
         setContentView(R.layout.activity_recorded)
 
         val isTeacher = (sessionManager.getRole() ?: "").uppercase() == "TEACHER"
@@ -66,12 +57,8 @@ class RecordedLectureActivity : AppCompatActivity() {
                 i.putExtra("url", lecture.videoUrl)
                 startActivity(i)
             },
-            onToggleBookmark = { lecture ->
-                toggleBookmark(lecture.id)
-            },
-            onDelete = { lecture ->
-                confirmDelete(lecture.id)
-            }
+            onToggleBookmark = { lecture -> toggleBookmark(lecture.id) },
+            onDelete = { lecture -> confirmDelete(lecture.id) }
         )
 
         recycler.adapter = adapter
@@ -85,11 +72,11 @@ class RecordedLectureActivity : AppCompatActivity() {
             }
         })
 
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
+        findViewById<View>(R.id.btnBack).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val btnUpload = findViewById<ImageView>(R.id.btnUpload)
+        val btnUpload = findViewById<View>(R.id.btnUpload)
         if (isTeacher) {
             btnUpload.visibility = View.VISIBLE
             btnUpload.setOnClickListener { pickVideo.launch("video/*") }
@@ -107,7 +94,6 @@ class RecordedLectureActivity : AppCompatActivity() {
                 if (response.isSuccessful && body != null && body.success) {
                     fullList.clear()
                     fullList.addAll(body.lectures)
-                    adapter.updateList(fullList)
                     filterList(searchView.query?.toString().orEmpty())
                 } else {
                     Toast.makeText(this@RecordedLectureActivity, "Failed to load lectures", Toast.LENGTH_SHORT).show()
@@ -244,8 +230,8 @@ class RecordedLectureActivity : AppCompatActivity() {
         val s: RequestBody = subject.toRequestBody("text/plain".toMediaTypeOrNull())
         val c: RequestBody = category.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        RetrofitClient.instance.uploadLecture(videoPart, t, s, c).enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
+        RetrofitClient.instance.uploadLecture(videoPart, t, s, c).enqueue(object : Callback<SimpleResponse> {
+            override fun onResponse(call: Call<SimpleResponse>, response: Response<SimpleResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@RecordedLectureActivity, "Uploaded", Toast.LENGTH_SHORT).show()
                     fetchLectures()
@@ -254,7 +240,7 @@ class RecordedLectureActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<Any>, t: Throwable) {
+            override fun onFailure(call: Call<SimpleResponse>, t: Throwable) {
                 Toast.makeText(this@RecordedLectureActivity, "Connection error", Toast.LENGTH_SHORT).show()
             }
         })

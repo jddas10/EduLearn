@@ -1,6 +1,5 @@
-package com.example.edulearn.model
+package com.example.edulearn
 
-// ====== AUTH ======
 data class LoginRequest(
     val username: String,
     val password: String,
@@ -16,7 +15,6 @@ data class AuthResponse(
     val userId: Int? = null
 )
 
-// ====== QUIZ ======
 data class QuizQuestionPayload(
     val questionText: String,
     val optA: String,
@@ -72,7 +70,6 @@ data class QuizDetailResponse(
     val questions: List<QuizQuestionDto>
 )
 
-// ====== ATTENDANCE ======
 data class AttendanceStartRequest(
     val title: String,
     val lat: Double,
@@ -141,34 +138,4 @@ data class AttendanceSessionDto(
 data class AttendanceSessionsResponse(
     val success: Boolean,
     val sessions: List<AttendanceSessionDto>?
-)
-
-// ====== LECTURES ======
-data class LectureModel(
-    val id: Int,
-    val teacherId: Int,
-    val title: String,
-    val subject: String,
-    val category: String,
-    val createdAt: String,
-    val videoUrl: String,
-    val bookmarked: Boolean
-)
-
-data class LecturesResponse(
-    val success: Boolean,
-    val lectures: List<LectureModel>
-)
-
-data class ToggleBookmarkRequest(val lectureId: Int)
-
-data class ToggleBookmarkResponse(
-    val success: Boolean,
-    val bookmarked: Boolean,
-    val message: String? = null
-)
-
-data class SimpleResponse(
-    val success: Boolean,
-    val message: String? = null
 )
