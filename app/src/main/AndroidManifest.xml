@@ -15,7 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EduLearn"
         android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:name=".MyApp"
+        >
+
 
         <activity
             android:name=".RoleSelectionActivity"
@@ -40,6 +43,7 @@
         <activity android:name=".VideoPlayerActivity" />
         <activity android:name=".TeacherAttendanceActivity" />
         <activity android:name=".StudentAttendanceActivity" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

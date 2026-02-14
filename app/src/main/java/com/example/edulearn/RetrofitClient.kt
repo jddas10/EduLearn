@@ -8,27 +8,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    const val BASE_URL = "https://len-ontario-experiments-painting.trycloudflare.com/"
+    private const val BASE_URL = "https://guides-faqs-mix-quite.trycloudflare.com/"
 
     private lateinit var sessionManager: SessionManager
 
     fun init(context: Context) {
-        sessionManager = SessionManager(context)
+        sessionManager = SessionManager(context.applicationContext)
     }
 
-    fun baseUrl(): String = BASE_URL.trim()
+    fun baseUrl(): String = BASE_URL.trim().let { if (it.endsWith("/")) it else "$it/" }
 
     private val authInterceptor = Interceptor { chain ->
-        val request = chain.request()
         val token = if (::sessionManager.isInitialized) sessionManager.getToken().orEmpty() else ""
-
-        val newRequest = if (token.isNotBlank()) {
-            request.newBuilder()
-                .header("Authorization", "Bearer $token")
-                .build()
-        } else request
-
-        chain.proceed(newRequest)
+        val req = chain.request().newBuilder().apply {
+            if (token.isNotBlank()) header("Authorization", "Bearer $token")
+        }.build()
+        chain.proceed(req)
     }
 
     private val client = OkHttpClient.Builder()
@@ -37,7 +32,7 @@ object RetrofitClient {
 
     val instance: ApiService by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL.trim())
+            .baseUrl(baseUrl())
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="EduLearn">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-02-08T07:04:53.946181800Z">
+        <DropdownSelection timestamp="2026-02-14T09:53:05.698049800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=10BDAL2L4D000CN" />
