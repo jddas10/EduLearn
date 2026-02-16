@@ -52,6 +52,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // SPLASH SCREEN KE LIYE - YEH NEW HAI
+    implementation("androidx.cardview:cardview:1.0.0")
+
+    // EXISTING DEPENDENCIES
     implementation("com.airbnb.android:lottie:6.0.0")
     implementation("androidx.fragment:fragment-ktx:1.6.1")
     implementation("io.coil-kt:coil:2.4.0")
@@ -70,6 +74,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+
     val camerax_version = "1.3.0"
     implementation("androidx.camera:camera-core:${camerax_version}")
     implementation("androidx.camera:camera-camera2:${camerax_version}")

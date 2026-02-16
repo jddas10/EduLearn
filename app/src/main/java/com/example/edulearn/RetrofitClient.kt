@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://guides-faqs-mix-quite.trycloudflare.com/"
+    private const val BASE_URL = "https://crm-missing-love-exists.trycloudflare.com/"
 
     private lateinit var sessionManager: SessionManager
 

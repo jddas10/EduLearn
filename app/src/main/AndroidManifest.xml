@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -16,23 +19,31 @@
         android:theme="@style/Theme.EduLearn"
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:name=".MyApp"
-        >
+        android:name=".MyApp">
 
-
+        <!-- SPLASH ACTIVITY - YEH LAUNCHER HAI AB -->
         <activity
-            android:name=".RoleSelectionActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- ROLE SELECTION - NO LAUNCHER -->
+        <activity
+            android:name=".RoleSelectionActivity"
+            android:exported="false" />
+
+        <!-- MAIN ACTIVITIES - NO LAUNCHER -->
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".TeacherMainActivity" android:exported="false" />
         <activity android:name=".LoginActivity" android:exported="false" />
 
+        <!-- OTHER ACTIVITIES -->
         <activity android:name=".LiveLectureActivity" />
         <activity android:name=".RecordedLectureActivity" />
         <activity android:name=".QuizActivity" />
@@ -43,7 +54,6 @@
         <activity android:name=".VideoPlayerActivity" />
         <activity android:name=".TeacherAttendanceActivity" />
         <activity android:name=".StudentAttendanceActivity" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

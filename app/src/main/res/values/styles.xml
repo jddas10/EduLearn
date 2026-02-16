@@ -28,7 +28,18 @@
         <item name="android:windowMinWidthMinor">90%</item>
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
-
+    <style name="Theme.EduLearn.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:navigationBarColor">@color/background_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/splash_gradient_background</item>
+        <item name="android:statusBarColor">@color/splash_bg_start</item>
+        <item name="android:navigationBarColor">@color/splash_bg_end</item>
+    </style>
 
 
 </resources>
